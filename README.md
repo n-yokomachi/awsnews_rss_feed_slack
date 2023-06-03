@@ -1,14 +1,31 @@
-# Welcome to your CDK TypeScript project
+# AWSNews RSS Feed Slack
 
-This is a blank project for CDK development with TypeScript.
+このCDKは、AWSのブログおよび最新情報の英語版RSSを取得し、
+Amazon Tanslateでタイトルのみ日本語化してSlackへ通知するLambda、EventBridgeを構築します
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
 
-## Useful commands
+対象の RSS は[AWS Blogs](https://aws.amazon.com/blogs/)の一部カテゴリと[What's New with AWS](https://aws.amazon.com/about-aws/whats-new/)です。  
+対象の詳細は、src/lib/feed.tsに記載しています。
 
-* `npm run build`   compile typescript to js
-* `npm run watch`   watch for changes and compile
-* `npm run test`    perform the jest unit tests
-* `cdk deploy`      deploy this stack to your default AWS account/region
-* `cdk diff`        compare deployed stack with current state
-* `cdk synth`       emits the synthesized CloudFormation template
+## アーキテクチャ
+
+![](./docs/architecture.drawio.png)
+
+
+## デプロイ
+
+### 1.Webhook URLの設定
+
+SlackのWebhook URLはLambdaの環境変数として設定しています。
+.envファイルはgitignoreしているので各自の環境で、CDKスタックの/libディレクトリ配下に.envファイルを作成し、下記を設定してください
+
+- SLACK_INCOMING_WEBHOOK_URL="Slack Webhook URL"
+- DRY_RUN="テストフラグ。値を設定した時有効、空の場合無効"
+    - フラグが有効の時、タイトルの翻訳とSlack通知の処理がスキップされます。
+
+### 2. デプロイ
+
+```bash
+$ cdk bootstrap // そのAWSアカウントで初実行時に実行
+$ cdk deploy    // デプロイ
+```
